@@ -19,7 +19,7 @@ namespace GLTFast.Export
     public class GameObjectExport
     {
 
-        IGltfWriter m_Writer;
+        IGltfWritable m_Writer;
         IMaterialExport m_MaterialExport;
         GameObjectExportSettings m_Settings;
 
@@ -52,7 +52,7 @@ namespace GLTFast.Export
         /// <param name="gameObjectExportSettings">GameObject export settings</param>
         /// <param name="materialExport">Provides material conversion</param>
         public GameObjectExport(
-            IGltfWriter writer,
+            IGltfWritable writer,
             GameObjectExportSettings gameObjectExportSettings = null,
             IMaterialExport materialExport = null,
         )
