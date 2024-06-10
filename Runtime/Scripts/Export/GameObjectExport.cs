@@ -54,7 +54,7 @@ namespace GLTFast.Export
         public GameObjectExport(
             IGltfWritable writer,
             GameObjectExportSettings gameObjectExportSettings = null,
-            IMaterialExport materialExport = null,
+            IMaterialExport materialExport = null
         )
         {
             m_Writer = writer;
