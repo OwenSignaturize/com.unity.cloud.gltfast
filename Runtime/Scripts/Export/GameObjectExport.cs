@@ -19,7 +19,7 @@ namespace GLTFast.Export
     public class GameObjectExport
     {
 
-        GltfWriter m_Writer;
+        IGltfWriter m_Writer;
         IMaterialExport m_MaterialExport;
         GameObjectExportSettings m_Settings;
 
@@ -42,6 +42,23 @@ namespace GLTFast.Export
         {
             m_Settings = gameObjectExportSettings ?? new GameObjectExportSettings();
             m_Writer = new GltfWriter(exportSettings, deferAgent, logger);
+            m_MaterialExport = materialExport ?? MaterialExport.GetDefaultMaterialExport();
+        }
+
+        /// <summary>
+        /// Provides glTF export of GameObject based scenes and hierarchies.
+        /// </summary>
+        /// <param name="writer">Custom writer</param>
+        /// <param name="gameObjectExportSettings">GameObject export settings</param>
+        /// <param name="materialExport">Provides material conversion</param>
+        public GameObjectExport(
+            IGltfWriter writer,
+            GameObjectExportSettings gameObjectExportSettings = null,
+            IMaterialExport materialExport = null,
+        )
+        {
+            m_Writer = writer;
+            m_Settings = gameObjectExportSettings ?? new GameObjectExportSettings();
             m_MaterialExport = materialExport ?? MaterialExport.GetDefaultMaterialExport();
         }
 
