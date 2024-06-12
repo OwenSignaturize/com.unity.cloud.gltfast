@@ -10,7 +10,7 @@ namespace GLTFast.Schema
     /// Scene, the top level hierarchy object.
     /// </summary>
     [System.Serializable]
-    public class Scene : NamedObject
+    public class Scene : NamedObject, IJsonWritable
     {
 
         /// <summary>
@@ -18,7 +18,7 @@ namespace GLTFast.Schema
         /// </summary>
         public uint[] nodes;
 
-        public Dictionary<string, object> extras;
+        public Dictionary<string, object> extras; //MUST BE FLOAT ARRAY
 
         internal void GltfSerialize(JsonWriter writer)
         {
@@ -32,11 +32,28 @@ namespace GLTFast.Schema
                 writer.AddObject();
                 foreach (var kvp in extras)
                 {
-                    writer.AddProperty(kvp.Key, kvp.Value.ToString());
+                    if (extras.TryGetValue(kvp.Key, out object val))
+                    {
+                        writer.AddArrayProperty(kvp.Key, (float[]) val);
+                    }
                 }
                 writer.Close();
             }
             writer.Close();
+        }
+
+        public void Serialize(JsonWriter writer, string key)
+        {
+             if (extras!=null && extras.Count>0)
+            {
+                if (extras.TryGetValue(key, out object val))
+                {
+                    writer.AddArrayProperty(key, (float[])val );
+                    writer.AddProperty(key);
+                    writer.AddObject();
+                    writer.Close();
+                }
+            }
         }
     }
 }

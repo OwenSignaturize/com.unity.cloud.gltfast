@@ -9,10 +9,11 @@ using GLTFast.Schema;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine.Scripting;
+using JsonWriter = GLTFast.Schema.JsonWriter;
 
 namespace GLTFast.Newtonsoft.Schema
 {
-    public class Scene : GLTFast.Schema.Scene, IJsonObject
+    public class Scene : GLTFast.Schema.Scene, IJsonObject, IJsonWritable
     {
         // public UnclassifiedData extras;
         public UnclassifiedData extensions;
@@ -36,6 +37,20 @@ namespace GLTFast.Newtonsoft.Schema
 
             value = default;
             return false;
+        }
+
+        public void Serialize(JsonWriter writer, string key)
+        {
+            if (extras!=null && extras.Count>0)
+            {
+                if (extras.TryGetValue(key, out object val))
+                {
+                    writer.AddArrayProperty(key, (float[])val );
+                    writer.AddProperty(key);
+                    writer.AddObject();
+                    writer.Close();
+                }
+            }
         }
     }
 }

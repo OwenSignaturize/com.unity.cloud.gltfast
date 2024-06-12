@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace GLTFast.Schema
 {
+    public interface IJsonWritable
+    {
+        void Serialize(JsonWriter writer, string key);
+    }
     /// <inheritdoc />
     [System.Serializable]
     public class Node : NodeBase<NodeExtensions> { }
@@ -150,7 +154,8 @@ namespace GLTFast.Schema
                 writer.AddObject();
                 foreach (var kvp in Extras)
                 {
-                    writer.AddProperty(kvp.Key, kvp.Value.ToString());
+                    IJsonWritable writable = (IJsonWritable)kvp.Value;
+                    writable.Serialize(writer, kvp.Key);
                 }
                 writer.Close();
             }
