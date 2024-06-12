@@ -123,23 +123,31 @@ namespace GLTFast.Export
             quaternion? rotation = null,
             float3? scale = null,
             uint[] children = null,
-            string name = null
+            string name = null,
+            Dictionary<string,object> extras = null
         )
         {
             CertifyNotDisposed();
             m_State = State.ContentAdded;
             var node = CreateNode(translation, rotation, scale, name);
             node.children = children;
+            node.extras=extras;
             m_Nodes = m_Nodes ?? new List<Node>();
             m_Nodes.Add(node);
             return (uint)m_Nodes.Count - 1;
         }
-
+        
         /// <inheritdoc />
         [Obsolete("Use overload with skinning parameter.")]
         public void AddMeshToNode(int nodeId, UnityEngine.Mesh uMesh, int[] materialIds)
         {
             AddMeshToNode(nodeId, uMesh, materialIds, true);
+        }
+
+        public void AddExtrasToNode(int nodeId, Dictionary<string,object> extras)
+        {
+            var node = m_Nodes[nodeId];
+            node.extras = extras;
         }
 
         /// <inheritdoc />
@@ -304,14 +312,16 @@ namespace GLTFast.Export
         }
 
         /// <inheritdoc />
-        public uint AddScene(uint[] nodes, string name = null)
+        public uint AddScene(uint[] nodes, string name = null, Dictionary<string,object> extras = null)
         {
             CertifyNotDisposed();
             m_Scenes = m_Scenes ?? new List<Scene>();
+            
             var scene = new Scene
             {
                 name = name,
-                nodes = nodes
+                nodes = nodes,
+                extras = extras
             };
             m_Scenes.Add(scene);
             if (m_Scenes.Count == 1)
@@ -1714,11 +1724,13 @@ namespace GLTFast.Export
             float3? translation = null,
             quaternion? rotation = null,
             float3? scale = null,
-            string name = null
+            string name = null,
+            Dictionary<string,object> extras = null
+            
         )
         {
             var parent = m_Nodes[parentId];
-            var node = CreateNode(translation, rotation, scale, name);
+            var node = CreateNode(translation, rotation, scale, name, extras);
             m_Nodes.Add(node);
             var nodeId = (uint)m_Nodes.Count - 1;
             if (parent.children == null)
@@ -1739,7 +1751,8 @@ namespace GLTFast.Export
             float3? translation = null,
             quaternion? rotation = null,
             float3? scale = null,
-            string name = null
+            string name = null,
+            Dictionary<string,object> extras = null
             )
         {
             var node = new Node
@@ -1758,6 +1771,8 @@ namespace GLTFast.Export
             {
                 node.scale = new[] { scale.Value.x, scale.Value.y, scale.Value.z };
             }
+
+            node.extras = extras;
 
             return node;
         }

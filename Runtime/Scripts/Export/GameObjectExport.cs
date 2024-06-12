@@ -20,7 +20,7 @@ namespace GLTFast.Export
     public class GameObjectExport
     {
 
-        GltfWriter m_Writer;
+        protected GltfWriter m_Writer;
         IMaterialExport m_MaterialExport;
         GameObjectExportSettings m_Settings;
 
@@ -52,9 +52,9 @@ namespace GLTFast.Export
         /// <param name="gameObjects">GameObjects to be added (recursively) as root level nodes.</param>
         /// <param name="name">Name of the scene</param>
         /// <returns>True, if the scene was added flawlessly. False, otherwise</returns>
-        public bool AddScene(GameObject[] gameObjects, string name = null)
+        public bool AddScene(GameObject[] gameObjects, string name = null, Dictionary<string,object> extras = null)
         {
-            return AddScene(gameObjects, float4x4.identity, name);
+            return AddScene(gameObjects, float4x4.identity, name, extras);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace GLTFast.Export
         /// <param name="origin">Inverse scene origin matrix. This transform will be applied to all nodes.</param>
         /// <param name="name">Name of the scene</param>
         /// <returns>True if the scene was added successfully, false otherwise</returns>
-        public bool AddScene(ICollection<GameObject> gameObjects, float4x4 origin, string name)
+        public virtual bool AddScene(ICollection<GameObject> gameObjects, float4x4 origin, string name, Dictionary<string,object> extras)
         {
             CertifyNotDisposed();
             var rootNodes = new List<uint>(gameObjects.Count);
@@ -87,7 +87,7 @@ namespace GLTFast.Export
             }
             if (rootNodes.Count > 0)
             {
-                m_Writer.AddScene(rootNodes.ToArray(), name);
+                m_Writer.AddScene(rootNodes.ToArray(), name, extras);
             }
 
             return success;
@@ -101,7 +101,7 @@ namespace GLTFast.Export
         /// <param name="path">glTF destination file path</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if the glTF file was created successfully, false otherwise</returns>
-        public async Task<bool> SaveToFileAndDispose(
+        public virtual async Task<bool> SaveToFileAndDispose(
             string path,
             CancellationToken cancellationToken = default
             )
@@ -131,14 +131,14 @@ namespace GLTFast.Export
             return success;
         }
 
-        void CertifyNotDisposed()
+        protected virtual void CertifyNotDisposed()
         {
             if (m_Writer == null)
             {
                 throw new InvalidOperationException("GameObjectExport was already disposed");
             }
         }
-        bool AddGameObject(
+        protected virtual bool AddGameObject(
             GameObject gameObject,
             float4x4? sceneOrigin,
             List<Material> tempMaterials,
@@ -221,7 +221,7 @@ namespace GLTFast.Export
             return success;
         }
 
-        void AddNodeComponents(GameObject gameObject, List<Material> tempMaterials, int nodeId)
+        protected virtual void AddNodeComponents(GameObject gameObject, List<Material> tempMaterials, int nodeId)
         {
             tempMaterials.Clear();
             Mesh mesh = null;

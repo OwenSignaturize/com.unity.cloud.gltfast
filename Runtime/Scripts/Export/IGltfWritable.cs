@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Unity.Mathematics;
@@ -31,7 +32,8 @@ namespace GLTFast.Export
             quaternion? rotation = null,
             float3? scale = null,
             uint[] children = null,
-            string name = null
+            string name = null,
+            Dictionary<string,object> extras = null
         );
 
         /// <summary>
@@ -124,7 +126,7 @@ namespace GLTFast.Export
         /// <param name="nodes">Root level nodes</param>
         /// <param name="name">Name of the scene</param>
         /// <returns>glTF scene index</returns>
-        uint AddScene(uint[] nodes, string name = null);
+        uint AddScene(uint[] nodes, string name = null, Dictionary<string,object> extras = null);
 
         /// <summary>
         /// Registers the use of a glTF extension

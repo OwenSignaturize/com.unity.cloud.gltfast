@@ -11,7 +11,7 @@ using UnityEngine.Assertions;
 namespace GLTFast.Schema
 {
 
-    class JsonWriter
+    public class JsonWriter
     {
 
         StreamWriter m_Stream;

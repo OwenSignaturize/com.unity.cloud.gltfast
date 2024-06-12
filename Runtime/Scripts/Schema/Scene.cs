@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
+
 namespace GLTFast.Schema
 {
 
@@ -16,11 +18,24 @@ namespace GLTFast.Schema
         /// </summary>
         public uint[] nodes;
 
+        public Dictionary<string, object> extras;
+
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
             GltfSerializeName(writer);
             writer.AddArrayProperty("nodes", nodes);
+            
+            if (extras != null && extras.Count > 0)
+            {
+                writer.AddProperty("extras");
+                writer.AddObject();
+                foreach (var kvp in extras)
+                {
+                    writer.AddProperty(kvp.Key, kvp.Value.ToString());
+                }
+                writer.Close();
+            }
             writer.Close();
         }
     }

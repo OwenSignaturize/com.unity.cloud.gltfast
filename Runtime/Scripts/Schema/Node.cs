@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using UnityEngine;
+
 namespace GLTFast.Schema
 {
     /// <inheritdoc />
@@ -15,6 +19,8 @@ namespace GLTFast.Schema
     {
         /// <inheritdoc cref="Extensions"/>
         public TExtensions extensions;
+
+        public override Dictionary<string, object> Extras => extras;
 
         /// <inheritdoc />
         public override NodeExtensions Extensions => extensions;
@@ -81,8 +87,12 @@ namespace GLTFast.Schema
         /// </summary>
         public int camera = -1;
 
+        public Dictionary<string, object> extras;
+
         /// <inheritdoc cref="NodeExtensions"/>
         public abstract NodeExtensions Extensions { get; }
+        
+        public abstract Dictionary<string, object> Extras { get; }
 
         /// <summary>
         /// Sets <see cref="Extensions"/> to null.
@@ -134,12 +144,28 @@ namespace GLTFast.Schema
                 writer.AddProperty("camera", camera);
             }
 
+            if (Extras != null && Extras.Count > 0)
+            {
+                writer.AddProperty("extras");
+                writer.AddObject();
+                foreach (var kvp in Extras)
+                {
+                    writer.AddProperty(kvp.Key, kvp.Value.ToString());
+                }
+                writer.Close();
+            }
+
             if (Extensions != null)
             {
                 writer.AddProperty("extensions");
                 Extensions.GltfSerialize(writer);
             }
             writer.Close();
+        }
+        
+        public void AddExtra(string key, object value)
+        {
+            Extras[key] = value;
         }
 
         /// <summary>

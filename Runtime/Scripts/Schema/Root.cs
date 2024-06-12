@@ -130,6 +130,7 @@ namespace GLTFast.Schema
 
         /// <inheritdoc cref="Meshes"/>
         public TMesh[] meshes;
+        public Dictionary<string,object> extras;
 
         /// <inheritdoc />
         public override IReadOnlyList<AccessorBase> Accessors => accessors;
@@ -138,6 +139,7 @@ namespace GLTFast.Schema
         /// <inheritdoc />
         public override IReadOnlyList<AnimationBase> Animations => animations;
 #endif
+        public override Dictionary<string,object> Extras => extras;
 
         /// <inheritdoc />
         public override Asset Asset => asset;
@@ -218,6 +220,7 @@ namespace GLTFast.Schema
         /// Metadata about the glTF asset.
         /// </summary>
         public abstract Asset Asset { get; }
+        public abstract Dictionary<string, object> Extras { get; }
 
         /// <summary>
         /// An array of buffers. A buffer points to binary geometry, animation, or skins.
@@ -461,6 +464,11 @@ namespace GLTFast.Schema
             {
                 writer.AddProperty("extensions");
                 Extensions.GltfSerialize(writer);
+            }
+
+            if (Extras != null)
+            {
+                writer.AddProperty("extras", Extras);
             }
 
             writer.Close();

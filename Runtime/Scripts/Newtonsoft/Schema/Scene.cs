@@ -14,8 +14,10 @@ namespace GLTFast.Newtonsoft.Schema
 {
     public class Scene : GLTFast.Schema.Scene, IJsonObject
     {
-        public UnclassifiedData extras;
+        // public UnclassifiedData extras;
         public UnclassifiedData extensions;
+
+        public Dictionary<string, object> extras;
 
         [JsonExtensionData]
         IDictionary<string, JToken> m_JsonExtensionData;
